@@ -1,0 +1,12 @@
+body {
+    background-color: darkslategray;
+    color: white;
+}
+
+nav a {
+    color: yellow;
+}
+
+h1 {
+    display: none;
+  }

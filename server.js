@@ -16,7 +16,7 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
-    res.render('contact', { layout: 'dark' });
+    res.render('contact', { layout: 'main' });
 });
 
 app.get('/info', (req, res) => {
@@ -24,14 +24,29 @@ app.get('/info', (req, res) => {
 });
 
 app.get('/history', (req, res) => {
-    res.render('history', { layout: 'main' });
+    res.render('history', { layout: 'dark' });
 });
 
 app.get('/hello/:name', (req, res) => {
-    res.render('hello', { name: req.params.name });
+    res.render('hello', { layout: 'main', name: req.params.name });
 });
 
+// app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.post('/contact/send-message', (req, res) => {
+    const { author, sender, title, message } = req.body;
+
+    if(author && sender && title && message) {
+        res.render('contact', { isSent: true });
+    }
+    else {
+        res.render('contact', { isError: true });
+    }
+    // res.json(req.body);
+  });
+
 app.use(express.static(path.join(__dirname, '/public')));
+
 
 app.use((req, res) => {
     res.status(404).send('404 not found...');

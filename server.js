@@ -1,14 +1,14 @@
 const express = require('express');
 const path = require('path');
 const hbs = require('express-handlebars');
-const fileUpload = require('express-fileupload');
+// const fileUpload = require('express-fileupload');
 
-// const multer = require('multer');
-// const upload = multer();
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 const app = express();
 
-app.use(fileUpload({ createParentPath: true }));
+// app.use(fileUpload({ createParentPath: true }));
 
 app.engine('.hbs', hbs());
 app.set('view engine', '.hbs');
@@ -16,6 +16,7 @@ app.set('view engine', '.hbs');
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.static(path.join(__dirname, '/uploads')));
 
+// app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
@@ -23,8 +24,6 @@ app.get('/', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-    const name = '0';
-    name.age();
     res.render('about', { layout: 'main' });
 });
 
@@ -44,27 +43,42 @@ app.get('/hello/:name', (req, res) => {
     res.render('hello', { layout: 'main', name: req.params.name });
 });
 
-// app.use(express.json());
-app.post('/contact/send-message', (req, res) => {
-    try {
-        const { author, sender, title, message } = req.body;
-        let image = req.files.image;
-        console.log('req.body',req.body);
-        console.log('req.file',req.files);
+// rozwiązanie z wykorzystanie multera
+app.post('/contact/send-message', upload.single('image'), (req, res) => {
+    const { author, sender, title, message } = req.body;
+    console.log('req.body',req.body);
+    console.log('req.file',req.file);
 
-        image.mv('./uploads/' + image.name);
-
-        if(author && sender && title && message && image) {
-            res.render('contact', { isSent: true, fileName: image.name });
-        }
-        else {
-            res.render('contact', { isError: true });
-        }
+    if(author && sender && title && message && req.file) {
+        res.render('contact', { isSent: true, fileName: req.file.originalname });
     }
-    catch(e) {
+    else {
         res.render('contact', { isError: true });
     }
-  });
+});
+
+
+// rozwiązanie z wykorzystaniem fileUpload
+// app.post('/contact/send-message', (req, res) => {
+//     try {
+//         const { author, sender, title, message } = req.body;
+//         let image = req.files.image;
+//         console.log('req.body',req.body);
+//         console.log('req.file',req.files);
+
+//         image.mv('./uploads/' + image.name);
+
+//         if(author && sender && title && message && image) {
+//             res.render('contact', { isSent: true, fileName: image.name });
+//         }
+//         else {
+//             res.render('contact', { isError: true });
+//         }
+//     }
+//     catch(e) {
+//         res.render('contact', { isError: true });
+//     }
+// });
 
 app.use(function(err,req,res,next) {
     res.render('error',{ layout: 'error' });

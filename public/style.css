@@ -98,6 +98,16 @@ button {
   -webkit-animation-name: fadeIn;
   animation-name: fadeIn;
   animation-duration: 1s;
+  flex-wrap: wrap;
+}
+
+.isSent div {
+  margin: auto;
+}
+
+.isSent .image {
+  max-width: 90%;
+  margin-top: 20px;
 }
 
 @-webkit-keyframes fadeIn {

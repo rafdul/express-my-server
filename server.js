@@ -4,7 +4,15 @@ const hbs = require('express-handlebars');
 // const fileUpload = require('express-fileupload');
 
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+})
+var upload = multer({ storage: storage })
 
 const app = express();
 

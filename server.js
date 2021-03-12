@@ -23,6 +23,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
+    const name = '0';
+    name.age();
     res.render('about', { layout: 'main' });
 });
 
@@ -44,21 +46,29 @@ app.get('/hello/:name', (req, res) => {
 
 // app.use(express.json());
 app.post('/contact/send-message', (req, res) => {
-    const { author, sender, title, message } = req.body;
-    const image = req.files.image;
-    console.log('req.body',req.body);
-    console.log('req.file',req.files);
+    try {
+        const { author, sender, title, message } = req.body;
+        let image = req.files.image;
+        console.log('req.body',req.body);
+        console.log('req.file',req.files);
 
-    image.mv('./uploads/' + image.name);
+        image.mv('./uploads/' + image.name);
 
-    if(author && sender && title && message && image) {
-        res.render('contact', { isSent: true, fileName: image.name });
+        if(author && sender && title && message && image) {
+            res.render('contact', { isSent: true, fileName: image.name });
+        }
+        else {
+            res.render('contact', { isError: true });
+        }
     }
-    else {
+    catch(e) {
         res.render('contact', { isError: true });
     }
-    // res.json(req.body);
   });
+
+app.use(function(err,req,res,next) {
+    res.render('error',{ layout: 'error' });
+});
 
 app.use((req, res) => {
     res.status(404).send('404 not found...');

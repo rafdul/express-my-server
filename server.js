@@ -4,12 +4,15 @@ const hbs = require('express-handlebars');
 // const fileUpload = require('express-fileupload');
 
 const multer = require('multer');
+let renameImage ='';
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'uploads/')
     },
     filename: function (req, file, cb) {
-      cb(null, file.originalname)
+        renameImage = Date.now()+ '-' + file.originalname;
+      cb(null, renameImage);
+      return renameImage;
     }
 })
 var upload = multer({ storage: storage })
@@ -58,7 +61,7 @@ app.post('/contact/send-message', upload.single('image'), (req, res) => {
     console.log('req.file',req.file);
 
     if(author && sender && title && message && req.file) {
-        res.render('contact', { isSent: true, fileName: req.file.originalname });
+        res.render('contact', { isSent: true, fileName: renameImage });
     }
     else {
         res.render('contact', { isError: true });
